@@ -33,7 +33,10 @@ jobs:
                   git config user.email "github-actions[bot]@users.noreply.github.com"
 
             - name: Run Auto Commit
-              run: node GhostCommit.js
+              run: |
+                node GhostCommit.js
+                git add .
+                git commit -m "chore: auto commit [skip ci]" || echo "No changes to commit"
 
             - name: Push
-              run: git push origin HEAD
+              run: git push origin HEAD || echo "Nothing to push"
