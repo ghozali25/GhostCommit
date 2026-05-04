@@ -56,14 +56,9 @@ const ProgressBar = (Current, Total, Width = 40) => {
 
 const MakeCommit = Index => {
     const CommitDate = GenerateRandomPastDate();
-    writeFileSync(
-        path.resolve(Dirname, Config.DataFile),
-        JSON.stringify({ CommitDate, Index }, null, 2),
-        "utf8"
-    );
-    Git(["add", Config.DataFile]);
     Git([
         "commit",
+        "--allow-empty",
         "--allow-empty-message",
         "-m",
         CommitDate,
