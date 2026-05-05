@@ -7,9 +7,9 @@
   <img src="https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" />
   <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-1a1a2e?style=for-the-badge&logo=linux&logoColor=white" />
   <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Author-XTM26-ff6b6b?style=for-the-badge&logo=github&logoColor=white" />
-  <a href="https://github.com/XTM26/GhostCommit/stargazers">
-    <img src="https://img.shields.io/github/stars/XTM26/GhostCommit?style=for-the-badge&logo=apachespark&logoColor=white&color=f5a623" />
+  <img src="https://img.shields.io/badge/Author-ghozali25-ff6b6b?style=for-the-badge&logo=github&logoColor=white" />
+  <a href="https://github.com/ghozali25/GhostCommit/stargazers">
+    <img src="https://img.shields.io/github/stars/ghozali25/GhostCommit?style=for-the-badge&logo=apachespark&logoColor=white&color=f5a623" />
   </a>
 
 </div>
@@ -24,8 +24,8 @@
 
 ```
 + GhostCommit: Auto Commit Tool +
-+ AUTHOR : XTM26
-+ GITHUB : XTM26
++ AUTHOR : ghozali25
++ GITHUB : ghozali25
   Total  : 100
   Push   : after all
 
@@ -62,7 +62,7 @@
 ## Installation
 
 ```bash
-git clone https://github.com/XTM26/GhostCommit.git
+git clone https://github.com/ghozali25/GhostCommit.git
 cd GhostCommit
 npm init -y
 npm i simple-git moment jsonfile random
@@ -129,7 +129,7 @@ GhostCommit/
 ---
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Made%20by-XTM26-ff6b6b?style=for-the-badge&logo=github&logoColor=white" />
+  <img src="https://img.shields.io/badge/Made%20by-ghozali25-ff6b6b?style=for-the-badge&logo=github&logoColor=white" />
   <br /><br />
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a1a2e,100:0f0f0f&height=100&section=footer" width="100%" />
 </div>
