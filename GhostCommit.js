@@ -1,6 +1,6 @@
 // GHOST COMMIT
-// AUTHOR : XTM26
-// GITHUB : https://github.com/XTM26/GhostCommit
+// AUTHOR : ghozali25
+// GITHUB : https://github.com/ghozali25/GhostCommit
 
 import { writeFileSync } from "fs";
 import { spawnSync } from "child_process";
@@ -10,11 +10,12 @@ import { fileURLToPath } from "url";
 const Dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const Config = {
-    TotalCommits: 100,
+    StartYear: 2023,   // The year to start backfilling from
     DataFile: "./data.json",
     RetryAttempts: 3,
     PushAfterAll: process.env.CI !== "true",
-    Verbose: true
+    Verbose: false,    // Set to false for cleaner output with many commits
+    CommitsPerDay: 1   // How many commits to make per day (1 is enough for green)
 };
 
 const Git = Args => {
@@ -29,20 +30,11 @@ const Git = Args => {
     return Result.stdout.trim();
 };
 
-const GenerateRandomPastDate = () => {
-    const Now = new Date();
-    const YearsAgo = new Date(Now);
-    YearsAgo.setFullYear(YearsAgo.getFullYear() - 1);
-
-    const Result = new Date(
-        YearsAgo.getTime() +
-            Math.floor(Math.random() * (Now.getTime() - YearsAgo.getTime()))
-    );
-
+const FormatDate = DateObj => {
     const Pad = N => String(N).padStart(2, "0");
     return (
-        `${Result.getFullYear()}-${Pad(Result.getMonth() + 1)}-${Pad(Result.getDate())}` +
-        `T${Pad(Result.getHours())}:${Pad(Result.getMinutes())}:${Pad(Result.getSeconds())}+07:00`
+        `${DateObj.getFullYear()}-${Pad(DateObj.getMonth() + 1)}-${Pad(DateObj.getDate())}` +
+        `T12:00:00+07:00` // Fixed time at noon
     );
 };
 
@@ -54,42 +46,33 @@ const ProgressBar = (Current, Total, Width = 40) => {
     process.stdout.write(`\r  [${Bar}] ${Percent}% (${Current}/${Total})`);
 };
 
-const MakeCommit = Index => {
-    const CommitDate = GenerateRandomPastDate();
+const MakeCommit = (DateStr, Index) => {
+    // Update data.json to make the commit "real"
+    const Data = {
+        LastCommit: DateStr,
+        TotalProcessed: Index + 1
+    };
+    writeFileSync(path.join(Dirname, Config.DataFile), JSON.stringify(Data, null, 2));
+
+    // Stage and Commit
+    Git(["add", Config.DataFile]);
     Git([
         "commit",
-        "--allow-empty",
-        "--allow-empty-message",
         "-m",
-        CommitDate,
-        `--date=${CommitDate}`,
+        `GhostCommit: ${DateStr}`,
+        `--date=${DateStr}`,
         "--no-verify"
     ]);
-    if (Config.Verbose)
-        process.stdout.write(`\n  OK commit #${Index + 1} -> ${CommitDate}\n`);
-};
 
-const MakeCommitWithRetry = Index => {
-    for (let Attempt = 1; Attempt <= Config.RetryAttempts; Attempt++) {
-        try {
-            MakeCommit(Index);
-            return;
-        } catch (Err) {
-            if (Attempt === Config.RetryAttempts) {
-                process.stderr.write(
-                    `\n  FAIL commit #${Index + 1} after ${Config.RetryAttempts}x: ${Err.message}\n`
-                );
-                throw Err;
-            }
-        }
-    }
+    if (Config.Verbose)
+        process.stdout.write(`\n  OK -> ${DateStr}\n`);
 };
 
 const Run = () => {
     process.stdout.write(`\n+ GhostCommit - Auto Commit Tool +\n`);
-    process.stdout.write(` + AUTHOR     :    XTM26\n`);
-    process.stdout.write(` + GITHUB     :    XTM26\n`);
-    process.stdout.write(`       Total  :    ${Config.TotalCommits}\n`);
+    process.stdout.write(` + AUTHOR     :    ghozali25\n`);
+    process.stdout.write(` + GITHUB     :    ghozali25\n`);
+    process.stdout.write(`       Range  :    ${Config.StartYear} - Today (Every Day)\n`);
     process.stdout.write(
         `       Push   :    ${Config.PushAfterAll ? "after all" : "CI handles"}\n\n`
     );
@@ -101,43 +84,55 @@ const Run = () => {
         process.exit(1);
     }
 
+    // Calculate all dates
+    const Dates = [];
+    let Current = new Date(`${Config.StartYear}-01-01T12:00:00`);
+    const Today = new Date();
+
+    while (Current <= Today) {
+        for (let i = 0; i < Config.CommitsPerDay; i++) {
+            Dates.push(FormatDate(new Date(Current)));
+        }
+        Current.setDate(Current.getDate() + 1);
+    }
+
+    const TotalCommits = Dates.length;
+    process.stdout.write(`       Commits:    ${TotalCommits} days to process\n\n`);
+
     let SuccessCount = 0;
-    let FailCount = 0;
     const StartTime = Date.now();
 
-    for (let I = 0; I < Config.TotalCommits; I++) {
+    for (let I = 0; I < TotalCommits; I++) {
         try {
-            MakeCommitWithRetry(I);
+            MakeCommit(Dates[I], I);
             SuccessCount++;
-        } catch {
-            FailCount++;
+        } catch (Err) {
+            process.stderr.write(`\n  Error at ${Dates[I]}: ${Err.message}\n`);
         }
-        ProgressBar(I + 1, Config.TotalCommits);
+        ProgressBar(I + 1, TotalCommits);
     }
 
     process.stdout.write("\n\n");
 
     if (Config.PushAfterAll) {
-        process.stdout.write("  Pushing...\n");
+        process.stdout.write("  Pushing to GitHub...\n");
         try {
             Git(["push"]);
             process.stdout.write("  Push OK\n\n");
         } catch (Err) {
             process.stderr.write(`  Push failed: ${Err.message}\n`);
-            process.stderr.write("  Run 'git push' manually.\n\n");
+            process.stderr.write("  Please run 'git push' manually.\n\n");
         }
     }
 
     const Elapsed = ((Date.now() - StartTime) / 1000).toFixed(1);
     process.stdout.write(`${"─".repeat(40)}\n`);
-    process.stdout.write(`  Success : ${SuccessCount} commits\n`);
-    if (FailCount > 0)
-        process.stdout.write(`  Failed  : ${FailCount} commits\n`);
-    process.stdout.write(`  Time    : ${Elapsed}s\n`);
-    process.stdout.write(
-        `  Speed   : ${(SuccessCount / Elapsed).toFixed(1)} commit/s\n`
-    );
+    process.stdout.write(`  Total Days : ${TotalCommits}\n`);
+    process.stdout.write(`  Success    : ${SuccessCount} commits\n`);
+    process.stdout.write(`  Time       : ${Elapsed}s\n`);
     process.stdout.write(`${"─".repeat(40)}\n\n`);
 };
 
 Run();
+
+
