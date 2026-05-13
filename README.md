@@ -59,71 +59,86 @@
 
 ---
 
-## Installation
+## 🚀 Quick Start
+
+Follow these steps to set up GhostCommit and start backfilling your contribution graph.
+
+### 1. Create a Repository
+1. Go to [GitHub](https://github.com/new) and create a **new repository** (can be public or private).
+2. Name it something like `my-contributions`.
+3. Do **not** initialize it with a README or License.
+
+### 2. Setup Locally
+Open your terminal/command prompt and run:
 
 ```bash
+# Clone this repository
 git clone https://github.com/ghozali25/GhostCommit.git
 cd GhostCommit
-npm init -y
-npm i simple-git moment jsonfile random
+
+# Initialize your own remote (optional if you want to push to your own repo)
+git remote set-url origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 ```
 
-Open `package.json` and change:
-
-```json
-"type": "commonjs"
-```
-
-to:
-
-```json
-"type": "module"
-```
-
----
-
-## Usage
+### 3. Installation
+GhostCommit is built with zero external dependencies to ensure stability. You only need Node.js installed.
 
 ```bash
-node GhostCommit.js
+# No npm install needed!
+# Just ensure you have Node.js 18+
+node -v
 ```
-
-That is all. GhostCommit will generate commits, display a live progress bar, and push everything once it finishes.
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
-Open `script.js` and edit the `Config` object at the top of the file:
+Open `GhostCommit.js` and edit the `Config` object at the top:
 
-```js
+```javascript
 const Config = {
-  TotalCommits: 100,
-  DataFile: "./data.json",
-  RetryAttempts: 3,
-  PushAfterAll: true,
-  Verbose: false,
+    StartYear: 2023,   // The year to start from
+    EndYear: null,     // The year to end (null for "Today")
+    CommitsPerDay: 50, // How many commits per day
+    PushAfterAll: true, // Auto-push to GitHub when finished
+    Verbose: false,    // Show detailed logs
 };
 ```
 
 | Key | Default | Description |
 |---|---|---|
-| `TotalCommits` | `100` | Total number of commits to generate |
-| `DataFile` | `./data.json` | File that gets modified on each commit |
-| `RetryAttempts` | `3` | How many times to retry a failed commit |
-| `PushAfterAll` | `true` | Push all commits at the end in one go |
-| `Verbose` | `false` | Print each commit date as it runs |
+| `StartYear` | `2023` | The year the script starts generating commits. |
+| `EndYear` | `null` | The year to stop. If `null`, it goes up to today's date. |
+| `CommitsPerDay` | `50` | Number of commits to generate for every single day. |
+| `PushAfterAll` | `true` | Automatically runs `git push` after all commits are done. |
+| `DataFile` | `./data.json` | The file that gets modified to trigger a real commit. |
 
 ---
 
-## Project Structure
+## 🏃 Usage
+
+Once configured, simply run:
+
+```bash
+node GhostCommit.js
+```
+
+### What happens next?
+1. GhostCommit calculates every date from `StartYear` to `EndYear`.
+2. It generates `CommitsPerDay` commits for each date.
+3. A beautiful progress bar shows the status.
+4. Once finished, it pushes everything to your GitHub repository.
+
+---
+
+## 📂 Project Structure
 
 ```
 GhostCommit/
-├── GhostCommit.js   — main script
-├── data.json        — auto-generated, committed each run
-├── package.json
-└── README.md
+├── GhostCommit.js   — The engine
+├── data.json        — Tracked file (modified per commit)
+├── package.json     — Project metadata
+└── README.md        — Documentation
 ```
 
 ---

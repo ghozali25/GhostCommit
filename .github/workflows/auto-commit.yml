@@ -33,8 +33,10 @@ jobs:
                   git config user.email "github-actions[bot]@users.noreply.github.com"
 
             - name: Run Auto Commit
+              env:
+                DAILY_MODE: "true"
               run: |
-                echo "Starting GhostCommit..."
+                echo "Starting GhostCommit in Daily Mode..."
                 node GhostCommit.js
                 echo "GhostCommit completed. Checking for commits..."
                 git log --oneline -5 || echo "No commits found"

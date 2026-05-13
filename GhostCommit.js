@@ -10,13 +10,20 @@ import { fileURLToPath } from "url";
 const Dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const Config = {
-    StartYear: 2025,   // The year to start backfilling from
+    StartYear: process.env.DAILY_MODE === "true" ? new Date().getFullYear() : 2023,
+    EndYear: process.env.DAILY_MODE === "true" ? new Date().getFullYear() : null,
     DataFile: "./data.json",
     RetryAttempts: 3,
     PushAfterAll: process.env.CI !== "true",
     Verbose: false,    // Set to false for cleaner output with many commits
     CommitsPerDay: 50  // How many commits to make per day (1 is enough for green)
 };
+
+// Override StartYear if we are in Daily Mode to only process today
+if (process.env.DAILY_MODE === "true") {
+    const Today = new Date();
+    Config.StartYear = Today.getFullYear();
+}
 
 const Git = Args => {
     const Result = spawnSync("git", Args, {
@@ -72,7 +79,7 @@ const Run = () => {
     process.stdout.write(`\n+ GhostCommit - Auto Commit Tool +\n`);
     process.stdout.write(` + AUTHOR     :    ghozali25\n`);
     process.stdout.write(` + GITHUB     :    ghozali25\n`);
-    process.stdout.write(`       Range  :    ${Config.StartYear} - Today (Every Day)\n`);
+    process.stdout.write(`       Range  :    ${Config.StartYear} - ${Config.EndYear || "Today"} (Every Day)\n`);
     process.stdout.write(
         `       Push   :    ${Config.PushAfterAll ? "after all" : "CI handles"}\n\n`
     );
@@ -86,10 +93,15 @@ const Run = () => {
 
     // Calculate all dates
     const Dates = [];
-    let Current = new Date(`${Config.StartYear}-01-01T12:00:00`);
-    const Today = new Date();
+    let Current = process.env.DAILY_MODE === "true" 
+        ? new Date() 
+        : new Date(`${Config.StartYear}-01-01T12:00:00`);
+    
+    const EndDate = Config.EndYear
+        ? new Date(`${Config.EndYear}-12-31T23:59:59`)
+        : new Date();
 
-    while (Current <= Today) {
+    while (Current <= EndDate) {
         for (let i = 0; i < Config.CommitsPerDay; i++) {
             Dates.push(FormatDate(new Date(Current)));
         }
