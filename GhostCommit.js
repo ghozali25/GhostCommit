@@ -15,7 +15,7 @@ const Config = {
     RetryAttempts: 3,
     PushAfterAll: process.env.CI !== "true",
     Verbose: false,    // Set to false for cleaner output with many commits
-    CommitsPerDay: 1   // How many commits to make per day (1 is enough for green)
+    CommitsPerDay: 50  // How many commits to make per day (1 is enough for green)
 };
 
 const Git = Args => {
@@ -97,7 +97,7 @@ const Run = () => {
     }
 
     const TotalCommits = Dates.length;
-    process.stdout.write(`       Commits:    ${TotalCommits} days to process\n\n`);
+    process.stdout.write(`       Commits:    ${TotalCommits} commits to process\n\n`);
 
     let SuccessCount = 0;
     const StartTime = Date.now();
@@ -127,7 +127,7 @@ const Run = () => {
 
     const Elapsed = ((Date.now() - StartTime) / 1000).toFixed(1);
     process.stdout.write(`${"─".repeat(40)}\n`);
-    process.stdout.write(`  Total Days : ${TotalCommits}\n`);
+    process.stdout.write(`  Total Commits: ${TotalCommits}\n`);
     process.stdout.write(`  Success    : ${SuccessCount} commits\n`);
     process.stdout.write(`  Time       : ${Elapsed}s\n`);
     process.stdout.write(`${"─".repeat(40)}\n\n`);
