@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f0f0f,100:1a1a2e&height=200&section=header&text=GhostCommit&fontSize=60&fontColor=ffffff&fontAlignY=38&desc=Backfill%20your%20GitHub%20contribution%20graph%20silently&descAlignY=58&descSize=16&descColor=aaaaaa" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&height=300&color=808080&text=GhostCommit&reversal=true&textBg=false&fontAlign=50&animation=fadeIn&desc=Backfill%20your%20GitHub%20contribution%20graph%20silently&descAlign=100&descAlignY=100&fontColor=FFFFFF" width="100%" />
 </div>
 
 <div align="center">
