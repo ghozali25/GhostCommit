@@ -99,7 +99,7 @@ Open `GhostCommit.js` and edit the `Config` object at the top:
 const Config = {
     StartYear: 2023,   // The year to start from
     EndYear: null,     // The year to end (null for "Today")
-    CommitsPerDay: 50, // How many commits per day
+    CommitsPerDay: process.env.DAILY_MODE === "true" ? 100 : 1, // Daily workflow: 100; backfill: 1
     PushAfterAll: true, // Auto-push to GitHub when finished
     Verbose: false,    // Show detailed logs
 };
@@ -109,7 +109,7 @@ const Config = {
 |---|---|---|
 | `StartYear` | `2023` | The year the script starts generating commits. |
 | `EndYear` | `null` | The year to stop. If `null`, it goes up to today's date. |
-| `CommitsPerDay` | `50` | Number of commits to generate for every single day. |
+| `CommitsPerDay` | `1` normally; `100` in daily mode | Commits generated for each date. The scheduled workflow uses daily mode. |
 | `PushAfterAll` | `true` | Automatically runs `git push` after all commits are done. |
 | `DataFile` | `./data.json` | The file that gets modified to trigger a real commit. |
 

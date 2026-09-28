@@ -16,7 +16,7 @@ const Config = {
     RetryAttempts: 3,
     PushAfterAll: process.env.CI !== "true",
     Verbose: false,    // Set to false for cleaner output with many commits
-    CommitsPerDay: 1  // How many commits to make per day (1 is enough for green)
+    CommitsPerDay: process.env.DAILY_MODE === "true" ? 100 : 1
 };
 
 // Override StartYear if we are in Daily Mode to only process today
