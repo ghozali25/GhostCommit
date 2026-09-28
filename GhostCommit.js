@@ -93,11 +93,15 @@ const Run = () => {
 
     // Calculate all dates
     const Dates = [];
-    let Current = process.env.DAILY_MODE === "true" 
-        ? new Date() 
+    const Today = new Date();
+    const IsDailyMode = process.env.DAILY_MODE === "true";
+    let Current = IsDailyMode
+        ? new Date(Today)
         : new Date(`${Config.StartYear}-01-01T12:00:00`);
-    
-    const EndDate = Config.EndYear
+
+    const EndDate = IsDailyMode
+        ? new Date(Today)
+        : Config.EndYear
         ? new Date(`${Config.EndYear}-12-31T23:59:59`)
         : new Date();
 
